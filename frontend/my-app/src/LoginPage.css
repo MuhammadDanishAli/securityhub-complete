@@ -1,0 +1,100 @@
+/* Universal body styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Main heading container */
+.main-heading {
+    text-align: center;
+    margin-top: 0vh; /* Adds space at the top */
+    font-size: 2rem; /* Ensure font size is defined properly */
+    font-weight: bold;
+    color: black; /* Changed text color to black for better contrast */
+    border-radius: 8px; /* Optional: Rounded corners if you want */
+    margin-bottom: 160px;
+}
+
+/* Login container to center the content */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: white; /* Light background color */
+}
+
+/* Styling for the login form */
+.login-form {
+    background-color: black; /* Dark background for form */
+    padding: 40px;
+    border-radius: 80px; /* Rounded corners for form */
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow for the form */
+    color: white;
+    width: 15%;
+    text-align: center;
+}
+
+/* Heading inside the form */
+.login-form h2 {
+    margin-bottom: 20px;
+    font-size: 1.6rem; /* Adjust font size for the form heading */
+}
+
+/* Styling for form inputs */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+/* Styling for form labels */
+label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: white; /* Lighter color for labels */
+}
+
+/* Styling for input fields */
+input {
+    width: 80%;
+    padding: 14px;
+    margin-top: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    font-size: 16px;
+}
+
+/* Placeholder text color */
+input::placeholder {
+    color: #888;
+}
+
+/* Button styling */
+button.login-button {
+    width: 50%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+button.login-button:hover {
+    background-color: #0056b3;
+}
+
+/* Optional: Styling for the image container */
+.img {
+    margin-top: -108vh;
+    size: 1rem;
+    padding-right:170vh; 
+}
+

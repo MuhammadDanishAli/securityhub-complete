@@ -1,0 +1,90 @@
+/* General Styles */
+.container {
+    max-width: 100%;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-right: 50%;
+  }
+  
+  .back-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  /* Buttons */
+  .button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .button-default {
+    background-color: gray;
+    color: white;
+  }
+  
+  .button-primary {
+    background-color: blue;
+    color: white;
+  }
+  
+  .button-destructive {
+    background-color: red;
+    color: white;
+  }
+  
+  .button:hover {
+    opacity: 0.8;
+  }
+  
+  /* User List */
+  .user-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f3f3f3;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+  }
+  
+  /* Actions */
+  .user-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  /* Inputs */
+  .input-field,
+  .role-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* Error Message */
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  

@@ -1,0 +1,28 @@
+/* Navigation Bar */
+.nav-bar {
+  padding: 10px;
+  background-color: #2c3e50;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-bar a {
+  margin-right: 15px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.nav-bar a:hover {
+  color: #3498db;
+}
+
+/* Content container to avoid overlap with fixed nav */
+.content-container {
+  padding-top: 60px;
+}
