@@ -1,0 +1,18 @@
+INFO 2025-04-18 17:41:56,961 autoreload Watching for file changes with StatReloader
+DEBUG 2025-04-18 17:41:56,962 autoreload Waiting for apps ready_event.
+DEBUG 2025-04-18 17:41:57,056 autoreload Apps ready_event triggered. Sending autoreload_started signal.
+DEBUG 2025-04-18 17:41:57,064 autoreload Watching dir /home/danish/BACKEND_PROJECT/django_venv/lib/python3.12/site-packages/rest_framework/templates with glob **/*.
+DEBUG 2025-04-18 17:41:57,064 autoreload Watching dir /home/danish/BACKEND_PROJECT/locale with glob **/*.mo.
+DEBUG 2025-04-18 17:41:57,064 autoreload Watching dir /home/danish/BACKEND_PROJECT/api/locale with glob **/*.mo.
+DEBUG 2025-04-18 17:41:57,065 autoreload Watching dir /home/danish/BACKEND_PROJECT/core/locale with glob **/*.mo.
+DEBUG 2025-04-18 17:41:57,065 autoreload Watching dir /home/danish/BACKEND_PROJECT/django_venv/lib/python3.12/site-packages/rest_framework/locale with glob **/*.mo.
+DEBUG 2025-04-18 17:41:57,065 autoreload Watching dir /home/danish/BACKEND_PROJECT/django_venv/lib/python3.12/site-packages/rest_framework/authtoken/locale with glob **/*.mo.
+DEBUG 2025-04-18 17:41:57,065 autoreload Watching dir /home/danish/BACKEND_PROJECT/django_venv/lib/python3.12/site-packages/channels/locale with glob **/*.mo.
+DEBUG 2025-04-18 17:41:57,104 utils (0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None; alias=default
+DEBUG 2025-04-18 17:41:57,108 utils (0.000) SELECT "django_migrations"."id", "django_migrations"."app", "django_migrations"."name", "django_migrations"."applied" FROM "django_migrations"; args=(); alias=default
+Error: That port is already in use.
+✅ Connected to MQTT broker: localhost
+🚀 MQTT service started.
