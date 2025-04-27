@@ -1,57 +1,48 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
-import './LoginPage.css';
-import OIP from './OIP.jpg'; 
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Hardcoded credentials for demo (replace with real authentication)
-    if (username === 'admin' && password === '1234') {
-      navigate('/SuperUser'); // Redirect to Home page
+    const success = onLogin(username, password);
+    if (success) {
+      navigate('/security-system'); // Redirect on successful login
     } else {
-      alert('Invalid username or password');
+      setError('Invalid username or password');
     }
   };
 
   return (
     <div className="login-container">
-      <div className="main-heading">
-        <h2>Security System</h2>
-        <div className="img">
-          <img src={OIP} alt="Logo" className="logo" />
-        </div>
-      </div>
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Login</h2>
-        <div className="form-group">
+        {error && <p className="error-message">{error}</p>}
+        <div className="input-group">
           <label htmlFor="username">Username</label>
-          <input 
-            type="text" 
-            id="username" 
-            name="username" 
-            placeholder="Enter your username"
+          <input
+            type="text"
+            id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
         </div>
-        <div className="form-group">
+        <div className="input-group">
           <label htmlFor="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            placeholder="Enter your password"
+          <input
+            type="password"
+            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
-        <button type="submit" className="login-button">Login</button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );

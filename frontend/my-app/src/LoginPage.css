@@ -98,3 +98,8 @@ button.login-button:hover {
     padding-right:170vh; 
 }
 
+.error-message {
+    color: red;
+    margin-bottom: 15px;
+    font-size: 14px;
+  }

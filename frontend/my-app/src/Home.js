@@ -1,38 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import './App.css';
 import './Home.css';
 import OIP from './OIP.jpg';
 import Logo1 from './Logo1.jpeg';
-import { FaTimes, FaCog, FaList } from 'react-icons/fa';
+import { FaTimes, FaList } from 'react-icons/fa';
+import clients from './clients';
 
-// Clients and their respective home details
-const clients = [
-  {
-    id: 1,
-    name: 'Ali',
-    homes: [
-      { siteId: 1, siteType: 'House', address: '123 Main St', zones: { normal: ["Living Room", "Kitchen"], alert: ["Front Door"] } },
-      { siteId: 2, siteType: 'Storage', address: '456 Elm St', zones: { normal: ["Storage Room", "Office"], alert: ["Back Door"] } },
-    ]
-  },
-  {
-    id: 2,
-    name: 'Ahmed',
-    homes: [
-      { siteId: 3, siteType: 'Shop1', address: '789 Oak St', zones: { normal: ["Main Hall"], alert: ["Shop Entrance"] } },
-      { siteId: 4, siteType: 'Shop2', address: '101 Pine St', zones: { normal: ["Cash Counter"], alert: ["Emergency Exit"] } },
-    ]
-  },
-  {
-    id: 3,
-    name: 'Sara',
-    homes: [
-      { siteId: 5, siteType: 'Factory', address: '789 Oak St', zones: { normal: ["Gate"], alert: ["Office"] } },
-    ]
-  }
-];
-
-function Home() {
+function Home({ userRole }) {
   const navigate = useNavigate();
   const { clientId } = useParams();
   console.log("clientId:", clientId);
@@ -45,50 +20,19 @@ function Home() {
   const [armedHomes, setArmedHomes] = useState(client ? client.homes.map(() => Math.random() < 0.5) : []);
   const [stayMode, setStayMode] = useState(client ? client.homes.map(() => Math.random() < 0.5) : []);
   const [notifications, setNotifications] = useState([]);
-  const [homeAlerts, setHomeAlerts] = useState({});
-
-  const addToSystemLogs = (message) => {
-    const timestamp = new Date().toLocaleString();
-    const newLog = { timestamp, message };
-  
-    const storedLogs = JSON.parse(localStorage.getItem("systemLogs")) || [];
-    storedLogs.unshift(newLog); // Add newest log to the top
-    localStorage.setItem("systemLogs", JSON.stringify(storedLogs));
-  };
-  
-  useEffect(() => {
-    localStorage.setItem(`armedHomes-${clientId}`, JSON.stringify(armedHomes));
-  }, [armedHomes, clientId]);
-
-  const toggleHomeArmStatus = (index) => {
-    const newArmedHomes = [...armedHomes];
-    newArmedHomes[index] = !newArmedHomes[index];
-    setArmedHomes(newArmedHomes);
-    addNotification(`HOME NO ${index + 1} at ${client.homes[index].address} is now ${newArmedHomes[index] ? "Armed" : "Disarmed"}`);
-  };
-
-  const toggleStayMode = (index) => {
-    const newStayMode = [...stayMode];
-    newStayMode[index] = !newStayMode[index];
-    setStayMode(newStayMode);
-  };
 
   const addNotification = (message, homeId = null) => {
     const newAlert = { id: Date.now(), message };
     setNotifications((prev) => [...prev, newAlert]);
-
-    if (homeId) {
-      setHomeAlerts((prev) => ({
-        ...prev,
-        [homeId]: [...(prev[homeId] || []), message]
-      }));
-    }
   };
+
+  useEffect(() => {
+    localStorage.setItem(`armedHomes-${clientId}`, JSON.stringify(armedHomes));
+  }, [armedHomes, clientId]);
 
   useEffect(() => {
     const storedArmedHomes = localStorage.getItem(`armedHomes-${clientId}`);
     const storedStayMode = localStorage.getItem(`stayMode-${clientId}`);
-  
     if (storedArmedHomes) {
       setArmedHomes(JSON.parse(storedArmedHomes));
     }
@@ -118,20 +62,23 @@ function Home() {
       <button className="settings-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
         {sidebarOpen ? <FaTimes /> : <FaList />}
       </button>
-  
       <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <button className="close-btn" onClick={() => setSidebarOpen(false)}>
           <FaTimes />
         </button>
         <h2>Settings</h2>
         <ul>
-          <li className='ManageUser' onClick={() => navigate(`/manage-users`)}>Manage Users</li>
-          <li className='systemlogs' onClick={() => navigate(`/system-logs`)}>System Logs</li>
+          <li onClick={() => navigate(`/manage-users`)}>Manage Users</li>
           <li onClick={() => navigate(`/security-settings`)}>Security Settings</li>
           <li onClick={() => navigate(`/help-support`)}>Help & Support</li>
+          {userRole === 'admin' && (
+            <>
+              <li onClick={() => navigate(`/superuser`)}>Superuser</li>
+              <li onClick={() => navigate(`/system-logs`)}>System Logs</li>
+            </>
+          )}
         </ul>
       </div>
-    
       <h1 className="Head">Security System</h1>
       <div className="home-container">
         <div className="img">
@@ -159,8 +106,8 @@ function Home() {
       <div className="logos-container">
         <div className="row">
           {client.homes.map((home, index) => (
-            <div 
-              key={home.siteId} 
+            <div
+              key={home.siteId}
               className={`logo-box ${armedHomes[index] ? "armed" : "disarmed"}`}
               onClick={() => navigate(`/Sdata/${home.siteId}?address=${encodeURIComponent(home.address)}`)}
             >

@@ -1,80 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SuperUser.css';
-import { FaArrowLeft } from 'react-icons/fa';
+import OIP from './OIP.jpg';
 
-const clients = [
-  { id: 1, name: 'Ali', armed: true },
-  { id: 2, name: 'Ahmed', armed: false },
-  { id: 3, name: 'Sara', armed: true },
-  { id: 4, name: 'Zara', armed: false },
-];
+const SuperUser = () => {
+    const navigate = useNavigate();
+    const [systemLogs, setSystemLogs] = useState([]);
 
-function SuperUser() {
-  const navigate = useNavigate();
-  const [alerts, setAlerts] = useState({});
+     useEffect(() => {
+        const storedLogs = JSON.parse(localStorage.getItem("systemLogs")) || [];
+        setSystemLogs(storedLogs);
+    }, []);
 
-  useEffect(() => {
-    // Simulate real-time alerts using an interval
-    const alertInterval = setInterval(() => {
-      const newAlerts = { ...alerts };
-      clients.forEach(client => {
-        if (Math.random() < 0.3) { // 30% chance to generate an alert
-          if (!newAlerts[client.id]) newAlerts[client.id] = [];
-          newAlerts[client.id].push(`🚨 Alert for ${client.name} at ${new Date().toLocaleTimeString()}`);
-        }
-      });
-      setAlerts(newAlerts);
-    }, 15000); // Generate alerts every 15 sec
+    const clearSystemLogs = () => {
+        localStorage.removeItem('systemLogs');
+        setSystemLogs([]);
+    };
 
-    return () => clearInterval(alertInterval);
-  }, [alerts]);
-
-  return (
-    <div className="superuser-container">
-      <button className="back-btn" onClick={() => navigate('/')}> 
-        <FaArrowLeft /> Back 
-      </button>
-      <div className="alerts-section">
-        <h2>Recent Alerts</h2>
-        {Object.keys(alerts).length > 0 ? (
-          Object.entries(alerts).map(([clientId, clientAlerts]) => (
-            <div key={clientId} className="alert-box">
-              <h3>{clients.find(c => c.id === parseInt(clientId)).name}</h3>
-              {clientAlerts.map((alert, index) => (
-                <p key={index} className="alert-message">{alert}</p>
-              ))}
+    return (
+        <div className="superuser-container">
+            <div className="main-heading">
+                <h2>Security System</h2>
+                <div className="img">
+                    <img src={OIP} alt="Logo" className="logo" />
+                </div>
             </div>
-          ))
-        ) : (
-          <p>No alerts currently</p>
-        )}
-      </div>
-      <h1 className="superuser-header">Super User Dashboard</h1>
-    
-      
-      <div className="clients-list">
-        {clients.map(client => (
-          <div 
-            key={client.id} 
-            className="client-card" 
-            onClick={() => navigate(`/home/${client.id}`)}
-          >
-            <span 
-              className="status-dot" 
-              style={{ backgroundColor: client.armed ? 'red' : 'green' }}
-            ></span>
-            <p>{client.name}</p>
-            {alerts[client.id] && alerts[client.id].length > 0 && (
-              <span className="alert-badge">{alerts[client.id].length}</span>
-            )}
-          </div>
-        ))}
-      </div>
+            <header className="header">
+                <h2>Welcome Super User</h2>
+            </header>
 
-      {/* Alerts Section */}
-    </div>
-  );
-}
+            <div className="system-logs-section">
+                <h2>System Logs</h2>
+                {systemLogs.length > 0 ? (
+                    <ul className="logs-list">
+                        {systemLogs.map((log, index) => (
+                            <li key={index} className="log-item">
+                                <span className="timestamp">{log.timestamp}</span>
+                                <span className="message">{log.message}</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No system logs available.</p>
+                )}
+                <button onClick={clearSystemLogs} className="clear-logs-button">Clear Logs</button>
+            </div>
+            <div className="navigation-section">
+                 <button onClick={() => navigate('/manage-users')} className="manage-users-button">Manage Users</button>
+            </div>
+        </div>
+    );
+};
 
 export default SuperUser;

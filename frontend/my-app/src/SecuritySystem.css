@@ -1,63 +1,102 @@
-body {
-  background-color: #f5f5f5; /* From systemlog.css */
-  margin: 0;
-  font-family: Arial, sans-serif;
+
+/* SecuritySystem.css Styles */
+.security-system-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  margin-top: 20px;
 }
 
-h1 {
-  color: #333; /* From systemlog.css */
+.mode-section {
+  margin-bottom: 20px;
   text-align: center;
 }
 
-h2 {
-  color: #555;
+.mode-section h2 {
+  margin-bottom: 10px;
 }
 
-h3 {
-  color: #666;
-}
-
-button {
+.mode-section button {
+  padding: 10px 15px;
+  margin: 0 10px;
   background-color: #4CAF50;
   color: white;
-  padding: 10px 20px;
-  margin: 5px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
-button:hover {
+.mode-section button:hover {
   background-color: #45a049;
 }
 
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.sensors-section {
+  margin-bottom: 20px;
 }
 
-div {
-  margin: 10px 0;
+.sensors-section h2 {
+  margin-bottom: 10px;
 }
 
-p {
-  margin: 5px 0;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-  width: 80%;
-  margin: 0 auto; /* Centered like systemlog.css */
-}
-
-li {
-  background-color: #fff;
-  margin: 5px 0;
-  padding: 10px;
-  border-left: 5px solid #007bff; /* From systemlog.css */
+.sensor-item {
+  background-color: white;
+  padding: 15px;
   border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  text-align: left; /* From systemlog.css */
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the start (top) */
+}
+
+.sensor-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #34495e;
+}
+
+.sensor-item p {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.sensor-item button {
+  padding: 8px 12px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.sensor-item button:hover {
+  background-color: #217dbb;
+}
+
+.notifications-section {
+  margin-top: 20px;
+}
+
+.notifications-section h2 {
+  margin-bottom: 10px;
+}
+
+.logs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.log-item {
+  background-color: #ecf0f1;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  font-size: 14px;
+  border: 1px solid #bdc3c7;
 }

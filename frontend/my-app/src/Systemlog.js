@@ -1,34 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./systemlog.css";
 
-function SystemLogs() {
-  const [logs, setLogs] = useState([]);
-  const navigate = useNavigate();
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Systemlog.css';
+import { FaArrowLeft } from 'react-icons/fa';
 
-  useEffect(() => {
-    const storedLogs = JSON.parse(localStorage.getItem("systemLogs")) || [];
-    setLogs(storedLogs);
-  }, []);
+const Systemlog = () => {
+    const navigate = useNavigate();
+    const [systemLogs, setSystemLogs] = useState([]);
 
-  return (
-    <div className="system-logs-container">
-      <h1>📜 System Logs</h1>
-      <button className="back-btn" onClick={() => navigate(-1)}>Back</button>
+    useEffect(() => {
+        const storedLogs = JSON.parse(localStorage.getItem("systemLogs")) || [];
+        setSystemLogs(storedLogs);
+    }, []);
 
-      {logs.length > 0 ? (
-        <ul className="logs-list">
-          {logs.map((log, index) => (
-            <li key={index} className="log-item">
-              <span className="timestamp">[{log.timestamp}]</span> {log.message}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="no-logs">No logs recorded yet.</p>
-      )}
-    </div>
-  );
-}
+    return (
+        <div className="systemlog-container">
+            <div className="header">
+                <button className="back-button" onClick={() => navigate(-1)}>
+                    <FaArrowLeft /> Back
+                </button>
+                <h2>System Logs</h2>
+            </div>
+            {systemLogs.length > 0 ? (
+                <ul className="logs-list">
+                    {systemLogs.map((log, index) => (
+                        <li key={index} className="log-item">
+                            <span className="timestamp">{log.timestamp}</span>
+                            <span className="message">{log.message}</span>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No system logs available.</p>
+            )}
+        </div>
+    );
+};
 
-export default SystemLogs;
+export default Systemlog;
