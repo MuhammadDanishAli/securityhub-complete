@@ -151,7 +151,8 @@ LOGGING = {
     },
 }
 # MQTT Configuration
-MQTT_BROKER_HOST = 'broker.hivemq.com'  # Public MQTT broker
-MQTT_BROKER_PORT = 1883
-MQTT_BROKER_USERNAME = ''  # Leave empty if not required
-MQTT_BROKER_PASSWORD = ''  # Leave empty if not required
+MQTT_BROKER_HOST = 'test.mosquitto.org'
+MQTT_BROKER_PORT = 1883  # Try non-TLS first
+MQTT_BROKER_USERNAME = 'danish'
+MQTT_BROKER_PASSWORD = 'mqttpass123'
+MQTT_USE_TLS = False  # Disable TLS for now
