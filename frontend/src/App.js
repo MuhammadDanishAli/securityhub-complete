@@ -15,7 +15,6 @@ import HelpSupport from './HelpSupport';
 import SuperUser from './SuperUser';
 import Systemlog from './Systemlog';
 import Sdata from './Sdata';
-const API_URL = "https://securityhub-backend-muhammaddanishali-44eacdb7.koyeb.app";
 
 // Mock user data for demonstration (can be replaced with API call)
 const mockUsers = [
@@ -34,7 +33,9 @@ function PrivateRoute({ children, isLoggedIn, userRole, requiredRole }) {
   return children;
 }
 
-// Security System component (unchanged)
+const API_URL = "https://securityhub-backend-muhammaddanishali-44eacdb7.koyeb.app";
+
+// Security System component
 function SecuritySystem({ isLoggedIn }) {
   const [mode, setMode] = useState("Disarm");
   const [sensors, setSensors] = useState({
@@ -53,7 +54,7 @@ function SecuritySystem({ isLoggedIn }) {
     const fetchStatus = async () => {
       try {
         const startTime = performance.now();
-        const response = await fetch("http://localhost:8000/api/sensor-status/");
+        const response = await fetch(`${API_URL}/api/sensor-status/`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -166,7 +167,7 @@ function SecuritySystem({ isLoggedIn }) {
 
   const handleModeChange = async (newMode) => {
     try {
-      const response = await fetch("http://localhost:8000/api/mode/", {
+      const response = await fetch(`${API_URL}/api/mode/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -187,7 +188,7 @@ function SecuritySystem({ isLoggedIn }) {
 
   const handleSensorToggle = async (sensor, state) => {
     try {
-      const response = await fetch("http://localhost:8000/api/sensor/", {
+      const response = await fetch(`${API_URL}/api/sensor/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
