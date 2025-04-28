@@ -78,11 +78,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbname',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'host',
+        'NAME': 'Postgres',
+        'USER': 'Postgres_owner',
+        'PASSWORD': 'npg_WVKrD2It0nCL',
+        'HOST': 'ep-shiny-frost-a4enb2ci-pooler.us-east-1.aws.neon.tech',
         'PORT': '5432',
+        'OPTIONS': {'sslmode': 'require'},
     }
 }
 
