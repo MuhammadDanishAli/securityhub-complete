@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',  # Your app
+    'api',
     'rest_framework',
     'corsheaders',
     'channels',
@@ -60,7 +60,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # Add project-level templates directory if needed
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -140,19 +140,19 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'INFO',  # Only show INFO and above (no DEBUG)
+            'level': 'INFO',
             'propagate': False,
         },
         'django.utils.autoreload': {
             'handlers': ['console'],
-            'level': 'WARNING',  # Suppress DEBUG logs from autoreload
+            'level': 'WARNING',
             'propagate': False,
         },
     },
 }
-# MQTT Configuration
-MQTT_BROKER_HOST = 'test.mosquitto.org'
-MQTT_BROKER_PORT = 1883  # Try non-TLS first
-MQTT_BROKER_USERNAME = 'mqttuser'
-MQTT_BROKER_PASSWORD = 'mqttpass123'
-MQTT_USE_TLS = True
+
+MQTT_BROKER_HOST = 'broker.emqx.io'
+MQTT_BROKER_PORT = 1883
+MQTT_BROKER_USERNAME = ''
+MQTT_BROKER_PASSWORD = ''
+MQTT_USE_TLS = False

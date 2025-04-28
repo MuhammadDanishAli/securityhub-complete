@@ -7,5 +7,4 @@ def root_view(request):
 urlpatterns = [
     path('api/', include('api.urls')),
     path('', root_view, name='home'),
-    path('<path:path>', root_view),  # Catch-all for other paths
 ]
