@@ -155,4 +155,4 @@ MQTT_BROKER_HOST = 'test.mosquitto.org'
 MQTT_BROKER_PORT = 1883  # Try non-TLS first
 MQTT_BROKER_USERNAME = 'mqttuser'
 MQTT_BROKER_PASSWORD = 'mqttpass123'
-MQTT_USE_TLS = False
+MQTT_USE_TLS = True
