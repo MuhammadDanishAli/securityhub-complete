@@ -117,6 +117,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "https://securityhub-frontend-e8adldtmy.vercel.app",
+    "https://securityhub-frontend-btc9y764c.vercel.app",
     "http://localhost:3000",
     "http://192.168.0.121",
 ]
@@ -149,3 +150,8 @@ LOGGING = {
         },
     },
 }
+# MQTT Configuration
+MQTT_BROKER_HOST = 'broker.hivemq.com'  # Public MQTT broker
+MQTT_BROKER_PORT = 1883
+MQTT_BROKER_USERNAME = ''  # Leave empty if not required
+MQTT_BROKER_PASSWORD = ''  # Leave empty if not required
