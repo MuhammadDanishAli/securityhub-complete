@@ -60,7 +60,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  # Add templates directory
+        'DIRS': [],  # Add project-level templates directory if needed
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,6 +153,6 @@ LOGGING = {
 # MQTT Configuration
 MQTT_BROKER_HOST = 'test.mosquitto.org'
 MQTT_BROKER_PORT = 1883  # Try non-TLS first
-MQTT_BROKER_USERNAME = 'danish'
+MQTT_BROKER_USERNAME = 'mqttuser'
 MQTT_BROKER_PASSWORD = 'mqttpass123'
-MQTT_USE_TLS = False  # Disable TLS for now
+MQTT_USE_TLS = False
