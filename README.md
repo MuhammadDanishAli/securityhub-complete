@@ -14,3 +14,7 @@ A security management system with a Django backend and React frontend.
 ```bash
 git clone https://github.com/MuhammadDanishAli/securityhub-complete.git
 cd securityhub-complete
+## Deployed Application
+
+- Backend: https://securityhub-backend-muhammaddanishali-44eacdb7.koyeb.app
+- Frontend: https://securityhub-frontend-e8adldtmy.vercel.app
