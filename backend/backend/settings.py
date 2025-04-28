@@ -126,21 +126,26 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'simple': {
-            'format': '{levelname} {asctime} {message}',
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
             'style': '{',
         },
     },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',  # Changed to DEBUG to see full tracebacks
+            'propagate': False,
+        },
+        'api.views': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': False,
         },
         'django.utils.autoreload': {

@@ -69,8 +69,6 @@ def start_mqtt_client():
         logger.error(f"❌ MQTT Connection Error: {str(e)}")
         mqtt_client.loop_stop()
 
-start_mqtt_client()
-
 class TestAuthView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = [TokenAuthentication]
@@ -173,7 +171,7 @@ class SensorControlView(APIView):
             return Response({"error": "Failed to publish sensor control to MQTT"}, status=500)
         return Response({"status": f"{sensor} set to {state}"}, status=200)
 
-class SensorStatusView(ApiView):
+class SensorStatusView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
