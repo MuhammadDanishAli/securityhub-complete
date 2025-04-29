@@ -66,20 +66,33 @@ def on_disconnect(client, userdata, rc, properties=None):
 def start_mqtt_client():
     try:
         logger.info("🚀 MQTT service started.")
-        # Create MQTT client (without CallbackAPIVersion for compatibility)
         client = mqtt.Client()
         client.on_connect = on_connect
         client.on_message = on_message
 
         if settings.MQTT_USE_TLS:
-            # Use PROTOCOL_TLS for broader compatibility
             client.tls_set(tls_version=ssl.PROTOCOL_TLS, cert_reqs=ssl.CERT_NONE)
-            client.tls_insecure_set(True)  # Skip certificate verification (temporary)
+            client.tls_insecure_set(True)
 
         if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
             client.username_pw_set(settings.MQTT_BROKER_USERNAME, settings.MQTT_BROKER_PASSWORD)
 
-        client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT, 60)
+        # Retry logic
+        max_retries = 5
+        retry_delay = 5  # seconds
+        for attempt in range(max_retries):
+            try:
+                client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT, 60)
+                break  # Success, exit retry loop
+            except Exception as e:
+                logger.error("❌ MQTT Connection Attempt %d failed: %s", attempt + 1, str(e))
+                if attempt < max_retries - 1:
+                    logger.info("Retrying in %d seconds...", retry_delay)
+                    time.sleep(retry_delay)
+                else:
+                    logger.error("❌ Max retries reached. Could not connect to MQTT broker.")
+                    raise
+
         client.loop_start()
     except Exception as e:
         logger.error(f"❌ MQTT Connection Error: {str(e)}")
