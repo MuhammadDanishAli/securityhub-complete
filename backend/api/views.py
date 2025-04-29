@@ -64,31 +64,23 @@ def on_disconnect(client, userdata, rc, properties=None):
         logger.error(f"Reconnection failed: {str(e)}")
 
 def start_mqtt_client():
-    global mqtt_client
-    if mqtt_client is not None:
-        logger.info("MQTT client already running.")
-        return
     try:
-        # Use MQTTv311 and VERSION2 for compatibility
-        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, protocol=mqtt.MQTTv311)
-        mqtt_client.on_connect = on_connect
-        mqtt_client.on_message = on_message
-        mqtt_client.on_disconnect = on_disconnect
-
-        # Configure TLS if enabled
-        if getattr(settings, 'MQTT_USE_TLS', False):
-            # Disable certificate verification to fix [SSL: CERTIFICATE_VERIFY_FAILED]
-            mqtt_client.tls_set(tls_version=ssl.PROTOCOL_TLSv1_2, cert_reqs=ssl.CERT_NONE)
-            mqtt_client.tls_insecure_set(True)  # Skip verification (temporary)
-
-        # Set username/password if provided
-        if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
-            mqtt_client.username_pw_set(settings.MQTT_BROKER_USERNAME, settings.MQTT_BROKER_PASSWORD)
-
-        # Connect to the broker with a 60-second timeout
-        mqtt_client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT, 60)
-        mqtt_client.loop_start()
         logger.info("🚀 MQTT service started.")
+        # Create MQTT client (without CallbackAPIVersion for compatibility)
+        client = mqtt.Client()
+        client.on_connect = on_connect
+        client.on_message = on_message
+
+        if settings.MQTT_USE_TLS:
+            # Use PROTOCOL_TLS for broader compatibility
+            client.tls_set(tls_version=ssl.PROTOCOL_TLS, cert_reqs=ssl.CERT_NONE)
+            client.tls_insecure_set(True)  # Skip certificate verification (temporary)
+
+        if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
+            client.username_pw_set(settings.MQTT_BROKER_USERNAME, settings.MQTT_BROKER_PASSWORD)
+
+        client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT, 60)
+        client.loop_start()
     except Exception as e:
         logger.error(f"❌ MQTT Connection Error: {str(e)}")
         if mqtt_client:
