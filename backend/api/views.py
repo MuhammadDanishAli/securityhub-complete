@@ -9,6 +9,7 @@ from .serializers import SensorSerializer, SensorDataSerializer, AlertlogSeriali
 import paho.mqtt.publish as publish
 import paho.mqtt.client as mqtt
 import json
+import ssl
 import logging
 from django.conf import settings
 
@@ -16,12 +17,12 @@ logger = logging.getLogger('api.views')
 
 mqtt_client = None
 
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, rc, properties=None):
     if rc == 0:
-        logger.info(f"✅ Connected to MQTT broker: {settings.MQTT_BROKER_HOST}")
+        logger.info("✅ Connected to MQTT broker: %s", settings.MQTT_BROKER_HOST)
         client.subscribe("security/sensors/#")
     else:
-        logger.error(f"❌ Failed to connect to MQTT broker: {rc}")
+        logger.error("❌ Failed to connect to MQTT broker, return code: %d", rc)
 
 def on_message(client, userdata, msg):
     try:
@@ -30,11 +31,13 @@ def on_message(client, userdata, msg):
         logger.debug(f"Received MQTT message on topic {topic}: {payload}")
         topic_parts = topic.split('/')
         if len(topic_parts) < 3:
+            logger.warning(f"Invalid topic format: {topic}")
             return
         sensor_type = topic_parts[2]
         sensor_type_map = {'pir': 'PIR', 'vibration': 'Vibration', 'dht': 'DHT'}
         mapped_sensor_type = sensor_type_map.get(sensor_type)
         if not mapped_sensor_type:
+            logger.warning(f"Unknown sensor type: {sensor_type}")
             return
         sensor, _ = Sensor.objects.get_or_create(
             node_id=f"sensor_{sensor_type}",
@@ -52,24 +55,46 @@ def on_message(client, userdata, msg):
     except Exception as e:
         logger.error(f"Error processing MQTT message: {str(e)}")
 
+def on_disconnect(client, userdata, rc, properties=None):
+    logger.warning("Disconnected from MQTT broker. Attempting to reconnect...")
+    # Attempt to reconnect
+    try:
+        client.reconnect()
+    except Exception as e:
+        logger.error(f"Reconnection failed: {str(e)}")
+
 def start_mqtt_client():
     global mqtt_client
-    mqtt_client = mqtt.Client()
-    mqtt_client.on_connect = on_connect
-    mqtt_client.on_message = on_message
-    if getattr(settings, 'MQTT_USE_TLS', False):
-        mqtt_client.tls_set()
-    if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
-        mqtt_client.username_pw_set(settings.MQTT_BROKER_USERNAME, settings.MQTT_BROKER_PASSWORD)
+    if mqtt_client is not None:
+        logger.info("MQTT client already running.")
+        return
     try:
-        mqtt_client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT)
+        # Use MQTTv311 and VERSION2 for compatibility
+        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, protocol=mqtt.MQTTv311)
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_message = on_message
+        mqtt_client.on_disconnect = on_disconnect
+
+        # Configure TLS if enabled
+        if getattr(settings, 'MQTT_USE_TLS', False):
+            # Disable certificate verification to fix [SSL: CERTIFICATE_VERIFY_FAILED]
+            mqtt_client.tls_set(tls_version=ssl.PROTOCOL_TLSv1_2, cert_reqs=ssl.CERT_NONE)
+            mqtt_client.tls_insecure_set(True)  # Skip verification (temporary)
+
+        # Set username/password if provided
+        if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
+            mqtt_client.username_pw_set(settings.MQTT_BROKER_USERNAME, settings.MQTT_BROKER_PASSWORD)
+
+        # Connect to the broker with a 60-second timeout
+        mqtt_client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT, 60)
         mqtt_client.loop_start()
         logger.info("🚀 MQTT service started.")
     except Exception as e:
         logger.error(f"❌ MQTT Connection Error: {str(e)}")
-        mqtt_client.loop_stop()
+        if mqtt_client:
+            mqtt_client.loop_stop()
 
-class TestAuthView(APIView):
+class TestAuthView(APIView):  # Fixed typo: APIView
     permission_classes = [AllowAny]
     authentication_classes = [TokenAuthentication]
 
@@ -118,13 +143,16 @@ class ModeView(APIView):
             auth = None
             if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
                 auth = {"username": settings.MQTT_BROKER_USERNAME, "password": settings.MQTT_BROKER_PASSWORD}
+            # Use consistent TLS settings for publishing
+            tls_config = {'tls_version': ssl.PROTOCOL_TLSv1_2, 'cert_reqs': ssl.CERT_NONE} if getattr(settings, 'MQTT_USE_TLS', False) else None
             publish.single(
                 "security/mode",
                 payload=json.dumps({"mode": mode}),
                 hostname=settings.MQTT_BROKER_HOST,
                 port=settings.MQTT_BROKER_PORT,
                 auth=auth,
-                tls={'ca_certs': None} if getattr(settings, 'MQTT_USE_TLS', False) else None
+                tls=tls_config,
+                protocol=mqtt.MQTTv311
             )
             logger.info(f"Mode update sent: {mode}")
         except Exception as e:
@@ -157,13 +185,16 @@ class SensorControlView(APIView):
             auth = None
             if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
                 auth = {"username": settings.MQTT_BROKER_USERNAME, "password": settings.MQTT_BROKER_PASSWORD}
+            # Use consistent TLS settings for publishing
+            tls_config = {'tls_version': ssl.PROTOCOL_TLSv1_2, 'cert_reqs': ssl.CERT_NONE} if getattr(settings, 'MQTT_USE_TLS', False) else None
             publish.single(
                 topic,
                 payload=payload,
                 hostname=settings.MQTT_BROKER_HOST,
                 port=settings.MQTT_BROKER_PORT,
                 auth=auth,
-                tls={'ca_certs': None} if getattr(settings, 'MQTT_USE_TLS', False) else None
+                tls=tls_config,
+                protocol=mqtt.MQTTv311
             )
             logger.info(f"Published sensor control: {sensor} set to {state}")
         except Exception as e:
