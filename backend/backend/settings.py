@@ -12,8 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fyp-proj.fly.dev']
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*.pythonanywhere.com', 'MuhammadDanish.pythonanywhere.com']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -77,15 +76,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Postgres',
-        'USER': 'Postgres_owner',
-        'PASSWORD': 'npg_WVKrD2It0nCL',
-        'HOST': 'ep-shiny-frost-a4enb2ci-pooler.us-east-1.aws.neon.tech',
-        'PORT': '5432',
-        'OPTIONS': {'sslmode': 'require'},
-    }
+    'default': dj_database_url.config(default='postgresql://neondb_owner:npg_HjBS4wUs1Jgp@ep-calm-morning-a4mhk8un-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require')
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -117,10 +108,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
+    "https://securityhub-frontend.vercel.app",
     "https://securityhub-frontend-e8adldtmy.vercel.app",
     "https://securityhub-frontend-btc9y764c.vercel.app",
     "http://localhost:3000",
-    "http://192.168.0.121",
 ]
 
 LOGGING = {
@@ -157,8 +148,8 @@ LOGGING = {
     },
 }
 
-MQTT_BROKER_HOST = 'broker.hivemq.com'
+MQTT_BROKER_HOST = 't0923b12.ala.us-east-1.emqxsl.com'
 MQTT_BROKER_PORT = 1883
-MQTT_BROKER_USERNAME = ''
-MQTT_BROKER_PASSWORD = ''
+MQTT_BROKER_USERNAME = 'securityhub_user'
+MQTT_BROKER_PASSWORD = 'securemqtt123'
 MQTT_USE_TLS = False
