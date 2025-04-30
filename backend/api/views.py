@@ -11,6 +11,7 @@ import paho.mqtt.client as mqtt
 import json
 import ssl
 import logging
+import time
 from django.conf import settings
 
 logger = logging.getLogger('api.views')
@@ -57,18 +58,19 @@ def on_message(client, userdata, msg):
 
 def on_disconnect(client, userdata, rc, properties=None):
     logger.warning("Disconnected from MQTT broker. Attempting to reconnect...")
-    # Attempt to reconnect
     try:
         client.reconnect()
     except Exception as e:
         logger.error(f"Reconnection failed: {str(e)}")
 
 def start_mqtt_client():
+    global mqtt_client
     try:
         logger.info("🚀 MQTT service started.")
         client = mqtt.Client()
         client.on_connect = on_connect
         client.on_message = on_message
+        client.on_disconnect = on_disconnect
 
         if settings.MQTT_USE_TLS:
             client.tls_set(tls_version=ssl.PROTOCOL_TLS, cert_reqs=ssl.CERT_NONE)
@@ -77,13 +79,13 @@ def start_mqtt_client():
         if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
             client.username_pw_set(settings.MQTT_BROKER_USERNAME, settings.MQTT_BROKER_PASSWORD)
 
-        # Retry logic
+        # Retry logic with reconnection
         max_retries = 5
         retry_delay = 5  # seconds
         for attempt in range(max_retries):
             try:
                 client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT, 60)
-                break  # Success, exit retry loop
+                break
             except Exception as e:
                 logger.error("❌ MQTT Connection Attempt %d failed: %s", attempt + 1, str(e))
                 if attempt < max_retries - 1:
@@ -94,12 +96,14 @@ def start_mqtt_client():
                     raise
 
         client.loop_start()
+        mqtt_client = client
+        logger.info("MQTT client initialized successfully.")
     except Exception as e:
         logger.error(f"❌ MQTT Connection Error: {str(e)}")
         if mqtt_client:
             mqtt_client.loop_stop()
 
-class TestAuthView(APIView):  # Fixed typo: APIView
+class TestAuthView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = [TokenAuthentication]
 
@@ -148,7 +152,6 @@ class ModeView(APIView):
             auth = None
             if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
                 auth = {"username": settings.MQTT_BROKER_USERNAME, "password": settings.MQTT_BROKER_PASSWORD}
-            # Use consistent TLS settings for publishing
             tls_config = {'tls_version': ssl.PROTOCOL_TLSv1_2, 'cert_reqs': ssl.CERT_NONE} if getattr(settings, 'MQTT_USE_TLS', False) else None
             publish.single(
                 "security/mode",
@@ -190,7 +193,6 @@ class SensorControlView(APIView):
             auth = None
             if settings.MQTT_BROKER_USERNAME and settings.MQTT_BROKER_PASSWORD:
                 auth = {"username": settings.MQTT_BROKER_USERNAME, "password": settings.MQTT_BROKER_PASSWORD}
-            # Use consistent TLS settings for publishing
             tls_config = {'tls_version': ssl.PROTOCOL_TLSv1_2, 'cert_reqs': ssl.CERT_NONE} if getattr(settings, 'MQTT_USE_TLS', False) else None
             publish.single(
                 topic,
