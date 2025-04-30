@@ -156,7 +156,7 @@ LOGGING = {
     },
 }
 
-MQTT_BROKER_HOST = 'public.mqtthq.com'
+MQTT_BROKER_HOST = 'test.mosquitto.org'
 MQTT_BROKER_PORT = 1883
 MQTT_BROKER_USERNAME = ''
 MQTT_BROKER_PASSWORD = ''
