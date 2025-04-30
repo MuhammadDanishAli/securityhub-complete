@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-from api.views import start_mqtt_client
 
 class ApiConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -9,8 +8,9 @@ class ApiConfig(AppConfig):
     def ready(self):
         if not ApiConfig.mqtt_client_started:
             try:
+                # Import inside the method to avoid circular dependency
+                from api.views import start_mqtt_client
                 start_mqtt_client()
                 ApiConfig.mqtt_client_started = True
             except Exception as e:
-                # Use print since logger might not be initialized
                 print(f"Failed to start MQTT client: {str(e)}")
