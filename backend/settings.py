@@ -4,7 +4,7 @@ import dj_database_url
 print("Starting settings.py")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = '8tdqvt+h1syil^ax*kyuf%zvzyl$oq4c8atw6ye757j+i+8#0y'  # Replace with a secure key
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'a7d22^p8z&%s3&$dlhw$17j0+g&dqw$845=8f#g&21o=q#ye1*')
 
 DEBUG = True
 
@@ -25,6 +25,7 @@ INSTALLED_APPS = [
 ]
 print("After INSTALLED_APPS")
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -64,6 +65,10 @@ DATABASES = {
         'PASSWORD': 'mysqlpassword123',  # Replace with the password you set
         'HOST': 'MuhammadDanish.mysql.pythonanywhere-services.com',
         'PORT': '3306',
+	'OPTIONS': {
+            'init_command': "SET SESSION sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
+            'charset': 'utf8mb4',
+        },
     }
 }
 print("DATABASES:", DATABASES)
@@ -80,13 +85,14 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "https://securityhub-frontend.vercel.app",
     "http://localhost:3000",
+    "https://MuhammadDanish.pythonanywhere.com",
 ]
 
 REST_FRAMEWORK = {
