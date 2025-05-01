@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'rest_framework.authtoken',  # Add this
     'corsheaders',
     'channels',
 ]
@@ -152,4 +153,4 @@ MQTT_BROKER_HOST = 't0923b12.ala.us-east-1.emqxsl.com'
 MQTT_BROKER_PORT = 1883
 MQTT_BROKER_USERNAME = 'securityhub_user'
 MQTT_BROKER_PASSWORD = 'securemqtt123'
-MQTT_USE_TLS = False
+MQTT_USE_TLS = False  # Fix the typo
