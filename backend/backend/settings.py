@@ -10,7 +10,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = '8tdqvt+h1syil^ax*kyuf%zvzyl$oq4c8atw6ye757j+i+8#0y'
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*.pythonanywhere.com', 'MuhammadDanish.pythonanywhere.com']
 INSTALLED_APPS = [
