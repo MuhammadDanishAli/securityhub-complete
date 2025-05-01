@@ -1,3 +1,15 @@
-.env
-frontend/.env
+# Python
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Django
+*.log
+staticfiles/
+
+# macOS
+.DS_Store
