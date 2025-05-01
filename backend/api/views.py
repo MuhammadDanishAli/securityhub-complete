@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -7,7 +7,6 @@ from django.contrib.auth import authenticate
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = []
 
     def post(self, request):
         username = request.data.get('username')
