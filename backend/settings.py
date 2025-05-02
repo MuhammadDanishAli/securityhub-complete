@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'a7d22^p8z&%s3&$dlhw$17j0+g&dqw$845=8f#g&21o=q#ye1*')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['MuhammadDanish.pythonanywhere.com', 'localhost', '127.0.0.1']
 
@@ -20,7 +20,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',  # Ensure this is here
     'corsheaders',
-    'channels',
     'api',
 ]
 print("After INSTALLED_APPS")
