@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.views.defaults import page_not_found, server_error
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Welcome to SecurityHub API. Use /api/ for API endpoints.")
 
 urlpatterns = [
+    path('', home, name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]
-
-# Define error handlers
-handler404 = page_not_found  # Handles 404 errors
-handler500 = server_error    # Handles 500 errors
