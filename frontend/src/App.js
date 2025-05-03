@@ -16,12 +16,6 @@ import SuperUser from './SuperUser';
 import Systemlog from './Systemlog';
 import Sdata from './Sdata';
 
-// Mock user data for demonstration (can be replaced with API call)
-const mockUsers = [
-  { username: 'user', password: 'password', role: 'user' },
-  { username: 'admin', password: 'admin', role: 'admin' },
-];
-
 // PrivateRoute component to protect routes
 function PrivateRoute({ children, isLoggedIn, userRole, requiredRole }) {
   if (!isLoggedIn) {
@@ -33,7 +27,7 @@ function PrivateRoute({ children, isLoggedIn, userRole, requiredRole }) {
   return children;
 }
 
-const API_URL = "https://securityhub-backend-muhammaddanishali-44eacdb7.koyeb.app";
+const API_URL = "https://muhammaddanish.pythonanywhere.com";
 
 // Security System component
 function SecuritySystem({ isLoggedIn }) {
@@ -54,7 +48,11 @@ function SecuritySystem({ isLoggedIn }) {
     const fetchStatus = async () => {
       try {
         const startTime = performance.now();
-        const response = await fetch(`${API_URL}/api/sensor-status/`);
+        const response = await fetch(`${API_URL}/api/sensor-status/`, {
+          headers: {
+            "Authorization": `Token ${localStorage.getItem('token')}`,
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -171,6 +169,7 @@ function SecuritySystem({ isLoggedIn }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({ mode: newMode }),
       });
@@ -192,6 +191,7 @@ function SecuritySystem({ isLoggedIn }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({ sensor, state }),
       });
@@ -286,8 +286,9 @@ function App() {
     const storedLoginStatus = localStorage.getItem('isLoggedIn');
     const storedUserRole = localStorage.getItem('userRole');
     const storedUserName = localStorage.getItem('userName');
+    const storedToken = localStorage.getItem('token');
     
-    if (storedLoginStatus === 'true' && storedUserRole && storedUserName) {
+    if (storedLoginStatus === 'true' && storedUserRole && storedUserName && storedToken) {
       setIsLoggedIn(true);
       setUserRole(storedUserRole);
       setUserName(storedUserName);
@@ -295,24 +296,40 @@ function App() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userRole');
       localStorage.removeItem('userName');
+      localStorage.removeItem('token');
       setIsLoggedIn(false);
       setUserRole(null);
       setUserName('');
     }
   }, []);
 
-  const handleLogin = (username, password) => {
-    const user = mockUsers.find(u => u.username === username && u.password === password);
-    if (user) {
-      setIsLoggedIn(true);
-      setUserRole(user.role);
-      setUserName(username);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userRole', user.role);
-      localStorage.setItem('userName', username);
-      return true;
+  const handleLogin = async (username, password) => {
+    try {
+      const response = await fetch(`${API_URL}/api/login/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setIsLoggedIn(true);
+        setUserRole(data.role || 'user'); // Adjust based on your backend response
+        setUserName(username);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole', data.role || 'user');
+        localStorage.setItem('userName', username);
+        localStorage.setItem('token', data.token);
+        return true;
+      } else {
+        console.error("Login failed:", data.error);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      return false;
     }
-    return false;
   };
 
   const handleLogout = () => {
@@ -322,6 +339,7 @@ function App() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
+    localStorage.removeItem('token');
   };
 
   const toggleHomesDropdown = () => {
