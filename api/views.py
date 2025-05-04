@@ -4,8 +4,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate
 from .mqtt import mqtt_client
-from rest_framework import status
-import json
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -46,19 +44,15 @@ class SensorStatusView(APIView):
             'dht': {'connected': True, 'enabled': False, 'temperature': 25, 'humidity': 60},
         }
         return Response(sensors)
-VALID_MODES = ["stay", "away", "disarm"]
 
 class ModeView(APIView):
-    authentication_classes = []  # Disable authentication for testing
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        data = request.data
-        mode = data.get("mode", "").lower()
-
-        if mode not in VALID_MODES:
-            return Response({"error": "Invalid mode"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Publish mode to MQTT
-        mqtt_client.publish("security/mode", json.dumps({"mode": mode}))
-        return Response({"status": "success", "mode": mode}, status=status.HTTP_200_OK)
+        mode = request.data.get('mode')
+        if mode in ['stay', 'away', 'disarm']:
+            # Publish mode change to MQTT (or handle as needed)
+            if mqtt_client:
+                mqtt_client.publish(f"Mode set to {mode}")
+            return Response({'status': 'Mode set', 'mode': mode})
+        return Response({'error': 'Invalid mode'}, status=400)

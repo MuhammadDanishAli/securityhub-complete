@@ -1,37 +1,48 @@
 import paho.mqtt.client as mqtt
-import json
 from django.conf import settings
+import ssl
 
-MQTT_BROKER = getattr(settings, "MQTT_BROKER_HOST", "t0923b12.ala.us-east-1.emqx.com")
-MQTT_PORT = getattr(settings, "MQTT_BROKER_PORT", 8883)
-MQTT_USERNAME = getattr(settings, "MQTT_BROKER_USERNAME", "securityhub_user")
-MQTT_PASSWORD = getattr(settings, "MQTT_BROKER_PASSWORD", "securemqtt123")
-MQTT_TOPIC = getattr(settings, "MQTT_TOPIC", "security/mode")  # Align with ModeView
+class MQTTClient:
+    def __init__(self):
+        self.client = mqtt.Client()
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+        if getattr(settings, 'MQTT_BROKER_USERNAME', None) and getattr(settings, 'MQTT_BROKER_PASSWORD', None):
+            self.client.username_pw_set(settings.MQTT_BROKER_USERNAME, settings.MQTT_BROKER_PASSWORD)
+        if getattr(settings, 'MQTT_USE_TLS', False):
+            self.client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_NONE, tls_version=ssl.PROTOCOL_TLSv1_2)
+            self.client.tls_insecure_set(True)  # For testing; remove in production
+        self.connected = False
+        self.keepalive = getattr(settings, 'MQTT_KEEPALIVE', 60)
 
-mqtt_client = mqtt.Client()
-mqtt_client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-mqtt_client.tls_set()  # Enable TLS for port 8883
+    def connect(self):
+        if not self.connected:
+            try:
+                self.client.connect(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT, self.keepalive)
+                self.client.loop_start()
+                self.connected = True
+                print("Connected to MQTT Broker!")
+            except Exception as e:
+                print(f"Failed to connect: {e}")
 
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print("Connected to MQTT Broker!")
-        client.subscribe(MQTT_TOPIC)
-    else:
-        print(f"Failed to connect to MQTT Broker with code: {rc}")
+    def on_connect(self, client, userdata, flags, rc):
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+            client.subscribe(settings.MQTT_TOPIC)
+        else:
+            print(f"Failed to connect, return code {rc}")
 
-def on_message(client, userdata, msg):
-    try:
-        payload = json.loads(msg.payload.decode())
-        print(f"Received message: {payload} on topic {msg.topic}")
-    except Exception as e:
-        print(f"Error processing message: {e}")
+    def on_message(self, client, userdata, msg):
+        print(f"Received message on topic: {msg.topic} with payload: {msg.payload.decode()}")
 
-mqtt_client.on_connect = on_connect
-mqtt_client.on_message = on_message
+    def publish(self, message):
+        if not self.connected:
+            self.connect()
+        result = self.client.publish(settings.MQTT_TOPIC, message)
+        if result.rc == mqtt.MQTT_ERR_SUCCESS:
+            print(f"Published message to {settings.MQTT_TOPIC}")
+        else:
+            print(f"Failed to publish message, return code {result.rc}")
+        return result
 
-def start_mqtt():
-    try:
-        mqtt_client.connect(MQTT_BROKER, MQTT_PORT)
-        mqtt_client.loop_start()
-    except Exception as e:
-        print(f"Failed to start MQTT client: {e}")
+mqtt_client = MQTTClient()
