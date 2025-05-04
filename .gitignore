@@ -18,3 +18,5 @@ securityhub/
 static/
 manage.py
 db.sqlite3
+node_modules/
+.vercel/
