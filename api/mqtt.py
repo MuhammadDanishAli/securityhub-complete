@@ -2,11 +2,11 @@ import paho.mqtt.client as mqtt
 import json
 from django.conf import settings
 
-MQTT_BROKER = getattr(settings, "MQTT_BROKER", "t0923b12.ala.us-east-1.emqx.com")
-MQTT_PORT = getattr(settings, "MQTT_PORT", 8883)
-MQTT_USERNAME = getattr(settings, "MQTT_USERNAME", "securityhub_user")
-MQTT_PASSWORD = getattr(settings, "MQTT_PASSWORD", "securemqtt123")
-MQTT_TOPIC = "security/sensors"
+MQTT_BROKER = getattr(settings, "MQTT_BROKER_HOST", "t0923b12.ala.us-east-1.emqx.com")
+MQTT_PORT = getattr(settings, "MQTT_BROKER_PORT", 8883)
+MQTT_USERNAME = getattr(settings, "MQTT_BROKER_USERNAME", "securityhub_user")
+MQTT_PASSWORD = getattr(settings, "MQTT_BROKER_PASSWORD", "securemqtt123")
+MQTT_TOPIC = getattr(settings, "MQTT_TOPIC", "security/sensors")
 
 mqtt_client = mqtt.Client()
 mqtt_client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
