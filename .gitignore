@@ -12,4 +12,9 @@ venv/
 staticfiles/
 
 # macOS
-.DS_Store
+.DS_Storeapi/
+backend/
+securityhub/
+static/
+manage.py
+db.sqlite3
