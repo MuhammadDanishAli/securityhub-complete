@@ -1,19 +1,17 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/manifest.json",
-      "destination": "/manifest.json"
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/build"
+      }
     }
   ],
-  "headers": [
+  "routes": [
     {
-      "source": "/manifest.json",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
