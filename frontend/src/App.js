@@ -305,6 +305,7 @@ function App() {
 
   const handleLogin = async (username, password) => {
     try {
+      console.log("Attempting login with:", { username, password });
       const response = await fetch(`${API_URL}/api/login/`, {
         method: "POST",
         headers: {
@@ -312,10 +313,12 @@ function App() {
         },
         body: JSON.stringify({ username, password }),
       });
+      console.log("Login response status:", response.status);
       const data = await response.json();
-      if (response.ok) {
+      console.log("Login response data:", data);
+      if (response.ok && data.token) {
         setIsLoggedIn(true);
-        setUserRole(data.role || 'user'); // Adjust based on your backend response
+        setUserRole(data.role || 'user');
         setUserName(username);
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userRole', data.role || 'user');
@@ -323,7 +326,7 @@ function App() {
         localStorage.setItem('token', data.token);
         return true;
       } else {
-        console.error("Login failed:", data.error);
+        console.error("Login failed with data:", data);
         return false;
       }
     } catch (error) {
