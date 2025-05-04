@@ -310,28 +310,46 @@ function App() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
+        credentials: "include", // Align with CORS_ALLOW_CREDENTIALS
         body: JSON.stringify({ username, password }),
       });
+
       console.log("Login response status:", response.status);
-      const data = await response.json();
-      console.log("Login response data:", data);
-      if (response.ok && data.token) {
+      console.log("Login response headers:", [...response.headers.entries()]);
+
+      const text = await response.text(); // Get raw response text for debugging
+      console.log("Raw response text:", text);
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error("Failed to parse JSON response:", error, "Raw text:", text);
+        return { success: false, error: "Invalid response format from server" };
+      }
+
+      console.log("Parsed login response data:", data);
+
+      if (response.ok && (data.token || data.key)) {
+        const token = data.token || data.key; // Handle both token and key
         setIsLoggedIn(true);
         setUserRole(data.role || 'user');
         setUserName(username);
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userRole', data.role || 'user');
         localStorage.setItem('userName', username);
-        localStorage.setItem('token', data.token);
-        return true;
+        localStorage.setItem('token', token);
+        console.log("Login successful, token stored:", token);
+        return { success: true };
       } else {
         console.error("Login failed with data:", data);
-        return false;
+        return { success: false, error: data.error || "Invalid username or password" };
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      return false;
+      console.error("Error during login:", error.message);
+      return { success: false, error: "Network error: " + error.message };
     }
   };
 
