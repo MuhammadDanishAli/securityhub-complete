@@ -10,6 +10,7 @@ MQTT_TOPIC = getattr(settings, "MQTT_TOPIC", "security/sensors")
 
 mqtt_client = mqtt.Client()
 mqtt_client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+mqtt_client.tls_set()  # Enable TLS for port 8883
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -19,12 +20,18 @@ def on_connect(client, userdata, flags, rc):
         print(f"Failed to connect to MQTT Broker with code: {rc}")
 
 def on_message(client, userdata, msg):
-    payload = json.loads(msg.payload.decode())
-    print(f"Received message: {payload} on topic {msg.topic}")
+    try:
+        payload = json.loads(msg.payload.decode())
+        print(f"Received message: {payload} on topic {msg.topic}")
+    except Exception as e:
+        print(f"Error processing message: {e}")
 
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
 
 def start_mqtt():
-    mqtt_client.connect(MQTT_BROKER, MQTT_PORT)
-    mqtt_client.loop_start()
+    try:
+        mqtt_client.connect(MQTT_BROKER, MQTT_PORT)
+        mqtt_client.loop_start()
+    except Exception as e:
+        print(f"Failed to start MQTT client: {e}")
